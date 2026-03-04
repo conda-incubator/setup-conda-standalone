@@ -1,0 +1,53 @@
+default_install_hook_types: [pre-commit, pre-push]
+exclude: ^dist/
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v6.0.0
+    hooks:
+      - id: check-added-large-files
+      - id: check-case-conflict
+      - id: check-merge-conflict
+      - id: check-yaml
+      - id: detect-private-key
+      - id: end-of-file-fixer
+      - id: mixed-line-ending
+      - id: trailing-whitespace
+
+  - repo: https://github.com/jumanjihouse/pre-commit-hook-yamlfmt
+    # This points to a revision on the main branch where a fix has been added such that it works also for Windows
+    rev: be8d90fa6286bca7f0f8345b7c95b7227926562d
+    hooks:
+      - id: yamlfmt
+        exclude: ^pnpm-lock\.yaml$
+        args: [--mapping, '2', --offset, '2', --sequence, '4', --implicit_start]
+
+  - repo: https://github.com/python-jsonschema/check-jsonschema
+    rev: 0.37.0
+    hooks:
+      - id: check-github-workflows
+
+  - repo: meta
+    hooks:
+      - id: check-hooks-apply
+      - id: check-useless-excludes
+
+  - repo: local
+    hooks:
+      - id: tsc
+        name: Type check
+        entry: pnpm type-check
+        language: system
+        pass_filenames: false
+
+      - id: lint
+        name: Linting
+        entry: pnpm lint-fix
+        language: system
+        pass_filenames: false
+
+      - id: compile
+        name: Compile bundle
+        entry: bash -c 'pnpm compile && git diff --quiet dist/'
+        language: system
+        pass_filenames: false
+        stages: [pre-push]
