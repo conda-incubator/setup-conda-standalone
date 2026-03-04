@@ -23,6 +23,7 @@ repos:
 
   - repo: https://github.com/python-jsonschema/check-jsonschema
     rev: 0.37.0
+    files: \.github/workflows/.*\.yaml
     hooks:
       - id: check-github-workflows
 
@@ -35,18 +36,21 @@ repos:
     hooks:
       - id: tsc
         name: Type check
+        files: \.(mts|ts|js|json|mjs|cjs)$
         entry: pnpm type-check
         language: system
         pass_filenames: false
 
       - id: lint
         name: Linting
+        files: \.(mts|ts|js|json|mjs|cjs)$
         entry: pnpm lint-fix
         language: system
         pass_filenames: false
 
       - id: compile
         name: Compile bundle
+        files: \.(mts|ts|js|mjs|cjs)$
         entry: bash -c 'pnpm compile && git diff --quiet dist/'
         language: system
         pass_filenames: false

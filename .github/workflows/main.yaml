@@ -1,4 +1,4 @@
-name: Build and test setup-conda-standalone
+name: Test setup-conda-standalone
 
 on:
   push:
