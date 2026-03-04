@@ -64,6 +64,11 @@ const compareReleases = (a: ParsedRelease, b: ParsedRelease): number => {
   return a.attrs.timestamp > b.attrs.timestamp ? -1 : 1;
 };
 
+/**
+ * Post-processes data from the Anaconda API.
+ * @param release - The raw data from the Anaconda API.
+ * @returns Post-processed API data.
+ */
 const parseRelease = (release: IPackageData): ParsedRelease => {
   const splitVersion = release.version.split('.');
   const parsedVersion = splitVersion.slice(0, 3).map((x) => parseInt(x));
