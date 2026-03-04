@@ -23,9 +23,9 @@ repos:
 
   - repo: https://github.com/python-jsonschema/check-jsonschema
     rev: 0.37.0
-    files: \.github/workflows/.*\.yaml
     hooks:
       - id: check-github-workflows
+        files: \.github/workflows/.*\.yaml
 
   - repo: meta
     hooks:
