@@ -1,0 +1,5 @@
+/.cache
+/.pnpm-store
+/coverage
+/dist
+/node_modules
