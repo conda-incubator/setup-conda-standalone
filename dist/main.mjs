@@ -17423,6 +17423,11 @@ const compareReleases = (a, b) => {
 	if (a.attrs.track_features !== b.attrs.track_features) return a.attrs.track_features ? 1 : -1;
 	return a.attrs.timestamp > b.attrs.timestamp ? -1 : 1;
 };
+/**
+* Post-processes data from the Anaconda API.
+* @param release - The raw data from the Anaconda API.
+* @returns Post-processed API data.
+*/
 const parseRelease = (release) => {
 	const splitVersion = release.version.split(".");
 	const parsedVersion = splitVersion.slice(0, 3).map((x) => parseInt(x));
