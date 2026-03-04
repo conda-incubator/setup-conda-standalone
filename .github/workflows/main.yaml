@@ -46,7 +46,7 @@ jobs:
     needs: lint
     strategy:
       matrix:
-        runner: [ubuntu-latest]
+        runner: [macos-latest, ubuntu-latest, windows-latest]
     runs-on: ${{ matrix.runner }}
     steps:
       - name: Checkout
@@ -79,7 +79,7 @@ jobs:
     strategy:
       matrix:
         build: [single, onedir]
-        runner: [ubuntu-latest]
+        runner: [macos-latest, ubuntu-latest, windows-latest]
     runs-on: ${{ matrix.runner }}
     env:
       BUILD_VARIANT: ${{ matrix.build }}
