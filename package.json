@@ -1,0 +1,29 @@
+{
+  "name": "setup-conda-standalone",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Action to set up conda-standalone",
+  "packageManager": "pnpm@10.30.1",
+  "scripts": {
+    "all": "run-s build lint-fix test",
+    "build": "run-s type-check compile",
+    "compile": "tsdown",
+    "dev": "tsdown --watch",
+    "eslint": "eslint",
+    "eslint-fix": "eslint --fix",
+    "lint": "run-s eslint prettier",
+    "lint-fix": "run-s eslint-fix prettier-fix",
+    "prettier": "prettier --cache --check '**/*.{cjs,js,json,mjs,mts,ts}'",
+    "prettier-fix": "prettier --write --cache --check '**/*.{cjs,js,json,mjs,mts,ts}'",
+    "test": "vitest run",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "typescript": "5.9.3"
+  },
+  "devDependencies": {
+    "globals": "17.3.0",
+    "npm-run-all2": "8.0.4",
+    "tsdown": "0.20.3"
+  }
+}
