@@ -1,5 +1,5 @@
 name: setup-conda-standalone
-description: Install conda-standalone
+description: Download and set up a conda-standalone binary.
 author: Marco Esters (@marcoesters)
 branding:
   icon: package
@@ -11,27 +11,25 @@ inputs:
       The build string of the conda-standalone build. Wild cards are supported.
   channel:
     description: |
-      The channel to download conda-standalone via the Anaconda API.
+      The channel to download conda-standalone from via the Anaconda API.
+      Must be set if `download-url` is not used.
   conda-standalone-version:
     default: latest
     description: |
       Version of conda-standalone to install when using the Anaconda API.
-      Must use the format <major>.<minor>.<patch>-<build number>.
-      Downloads the latest version by default.
+      Must use the format `<major>.<minor>.<patch>` and may contain post-release
+      numbers (such as `25.5.1.post1`). Downloads the latest version by default.
   destination-directory:
     description: |
-      The directory to download conda-standalone to.
+      The directory to download conda-standalone into.
     required: true
   download-url:
     description: |
-      The URL to download conda-standalone from directly instead of using the Anaconda API.
+      The URL to download conda-standalone from instead of using the Anaconda API.
+      Must be set if `channel` is not used.
   platform:
     description: |
-      The platform to of the conda-standalone binary if different from the host platform.
-
-outputs:
-  conda-standalone-bin:
-    description: Path to the conda-standalone binary.
+      The platform of the conda-standalone binary if different from the host platform.
 
 runs:
   using: node24
