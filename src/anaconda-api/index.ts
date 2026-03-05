@@ -2,7 +2,7 @@ import type { IPackageData, ParsedRelease } from './types';
 
 /**
  * Downloads the list of files from the Anaconda API endpoint.
- * @param channel - iThe channel to download from.
+ * @param channel - The channel to download from.
  * @returns The parsed response in JSON format.
  *
  * @throws

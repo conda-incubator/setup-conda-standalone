@@ -8,7 +8,8 @@ branding:
 inputs:
   build-string:
     description: |
-      The build string of the conda-standalone build. Wild cards are supported.
+      The build string of the conda-standalone build. Wildcards are supported,
+      for example, `'*onedir*'` to filter all builds containing the string `onedir`.
   channel:
     description: |
       The channel to download conda-standalone from via the Anaconda API.
