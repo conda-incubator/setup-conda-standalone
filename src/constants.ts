@@ -9,5 +9,6 @@ export const condaPlatforms: Record<string, string> = {
   'linux-ppc64': 'linux-ppc64le',
   'linux-s390x': 'linux-s390x',
   'linux-x64': 'linux-64',
+  'win32-arm64': 'win-arm64',
   'win32-x64': 'win-64',
 } as const;
