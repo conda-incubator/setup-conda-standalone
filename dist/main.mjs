@@ -17387,7 +17387,7 @@ function info(message) {
 //#region src/anaconda-api/index.ts
 /**
 * Downloads the list of files from the Anaconda API endpoint.
-* @param channel - iThe channel to download from.
+* @param channel - The channel to download from.
 * @returns The parsed response in JSON format.
 *
 * @throws
@@ -17450,13 +17450,14 @@ const parseRelease = (release) => {
 * @throws
 * When no conda-standalone release corresponds to the search parameters.
 */
-const getDownloadUrlFromApi = async (buildString, channel, condaStandaloneVersion, platform) => {
-	const findLatest = !condaStandaloneVersion || condaStandaloneVersion === "latest";
-	const releases = await getReleasesFromChannel(channel);
-	const matchesBuildString = buildStringMatcher(buildString);
-	const filteredReleases = releases.filter((r) => r.attrs.subdir === platform).filter((r) => findLatest || r.version === condaStandaloneVersion).filter((r) => matchesBuildString(r.attrs.build)).map((r) => parseRelease(r));
+const getDownloadUrlFromApi = async (options) => {
+	const findLatest = !options.condaStandaloneVersion || options.condaStandaloneVersion === "latest";
+	const releases = await getReleasesFromChannel(options.channel);
+	const matchesBuildString = buildStringMatcher(options.buildString);
+	const filteredReleases = releases.filter((r) => r.attrs.subdir === options.platform).filter((r) => !options.label || r.labels?.includes(options.label)).filter((r) => findLatest || r.version === options.condaStandaloneVersion).filter((r) => matchesBuildString(r.attrs.build)).map((r) => parseRelease(r));
 	if (filteredReleases.length === 0) throw new Error("Could not find suitable conda-standalone release.");
-	return `https:${filteredReleases.sort(compareReleases)[0].download_url}`;
+	const condaStandaloneRelease = filteredReleases.sort(compareReleases)[0];
+	return `https://conda.anaconda.org/${options.label ? `${options.channel}/label/${options.label}` : options.channel}/${condaStandaloneRelease.basename}`;
 };
 
 //#endregion
@@ -19308,6 +19309,7 @@ const condaPlatforms = {
 	"linux-ppc64": "linux-ppc64le",
 	"linux-s390x": "linux-s390x",
 	"linux-x64": "linux-64",
+	"win32-arm64": "win-arm64",
 	"win32-x64": "win-64"
 };
 
@@ -22856,11 +22858,22 @@ const getCondaArch = (platform = os$1.platform(), arch = os$1.arch()) => {
 */
 const getOptions = () => {
 	const inputs = parseInputs();
-	const condaVersion = inputs.condaStandaloneVersion ?? "latest";
+	const condaStandaloneVersion = inputs.condaStandaloneVersion ?? "latest";
 	const platform = inputs.platform ?? getCondaArch();
+	let channel = inputs.channel;
+	let label;
+	if (channel) {
+		const channelSplit = channel.split("/");
+		if (channelSplit.length === 3 && channelSplit[1] === "label") {
+			channel = channelSplit[0];
+			label = channelSplit[2];
+		}
+	}
 	return {
 		...inputs,
-		condaVersion,
+		channel,
+		condaStandaloneVersion,
+		label,
 		platform
 	};
 };
@@ -22872,7 +22885,7 @@ const getOptions = () => {
 */
 const run = async () => {
 	const options = getOptions();
-	const standaloneBin = await downloadCondaStandalone(options.downloadUrl ?? await getDownloadUrlFromApi(options.buildString, options.channel, options.condaVersion, options.platform), options.destinationDirectory);
+	const standaloneBin = await downloadCondaStandalone(options.downloadUrl ?? await getDownloadUrlFromApi(options), options.destinationDirectory);
 	exportVariable("CONDA_EXE", standaloneBin);
 };
 run().then(() => exit(0)).catch((err) => {
