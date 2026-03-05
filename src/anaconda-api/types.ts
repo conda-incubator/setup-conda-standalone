@@ -35,7 +35,7 @@ export interface IPackageData {
   distribution_type: string;
   download_url: string;
   full_name: string;
-  labels: string[];
+  labels?: string[];
   md5: string;
   ndownloads: number;
   owner: string;

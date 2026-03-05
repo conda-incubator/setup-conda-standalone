@@ -10,13 +10,7 @@ import { getOptions } from './options';
 const run = async (): Promise<void> => {
   const options = getOptions();
   const downloadUrl =
-    options.downloadUrl ??
-    (await getDownloadUrlFromApi(
-      options.buildString,
-      options.channel!,
-      options.condaVersion,
-      options.platform,
-    ));
+    options.downloadUrl ?? (await getDownloadUrlFromApi(options));
   const standaloneBin = await downloadCondaStandalone(
     downloadUrl,
     options.destinationDirectory,

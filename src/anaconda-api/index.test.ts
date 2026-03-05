@@ -1,5 +1,6 @@
 import * as fs from 'fs/promises';
 import * as path from 'path';
+import { type Options } from '../options';
 import { getDownloadUrlFromApi } from './index';
 
 const mockedFetch = vi.spyOn(global, 'fetch');
@@ -30,117 +31,144 @@ beforeAll(() => {
 
 describe('getDownloadUrlFromApi', () => {
   it('Returns the latest version', async () => {
-    const downloadUrl = await getDownloadUrlFromApi(
-      '',
-      'main',
-      'latest',
-      'linux-64',
-    );
+    const opts = {
+      buildString: '',
+      channel: 'main',
+      condaStandaloneVersion: 'latest',
+      platform: 'linux-64',
+    } as Options;
+    const downloadUrl = await getDownloadUrlFromApi(opts);
     expect(downloadUrl).toBe(
-      'https://api.anaconda.org/download/main/conda-standalone/25.11.0/linux-64/conda-standalone-25.11.0-h241fc32_single_1.tar.bz2',
+      'https://conda.anaconda.org/main/linux-64/conda-standalone-25.11.0-h241fc32_single_1.tar.bz2',
     );
   });
 
   it('Returns the latest version by default', async () => {
-    const downloadUrl = await getDownloadUrlFromApi('', 'main', '', 'linux-64');
+    const opts = {
+      buildString: '',
+      channel: 'main',
+      platform: 'linux-64',
+    } as Options;
+    const downloadUrl = await getDownloadUrlFromApi(opts);
     expect(downloadUrl).toBe(
-      'https://api.anaconda.org/download/main/conda-standalone/25.11.0/linux-64/conda-standalone-25.11.0-h241fc32_single_1.tar.bz2',
+      'https://conda.anaconda.org/main/linux-64/conda-standalone-25.11.0-h241fc32_single_1.tar.bz2',
     );
   });
 
   it('Returns the latest version by with undefined builds', async () => {
-    const downloadUrl = await getDownloadUrlFromApi(
-      undefined,
-      'main',
-      '',
-      'linux-64',
-    );
+    const opts = { channel: 'main', platform: 'linux-64' } as Options;
+    const downloadUrl = await getDownloadUrlFromApi(opts);
     expect(downloadUrl).toBe(
-      'https://api.anaconda.org/download/main/conda-standalone/25.11.0/linux-64/conda-standalone-25.11.0-h241fc32_single_1.tar.bz2',
+      'https://conda.anaconda.org/main/linux-64/conda-standalone-25.11.0-h241fc32_single_1.tar.bz2',
     );
   });
 
   it('Returns a specific version', async () => {
-    const downloadUrl = await getDownloadUrlFromApi(
-      '',
-      'main',
-      '25.9.1',
-      'linux-64',
-    );
+    const opts = {
+      channel: 'main',
+      condaStandaloneVersion: '25.9.1',
+      platform: 'linux-64',
+    } as Options;
+    const downloadUrl = await getDownloadUrlFromApi(opts);
     expect(downloadUrl).toBe(
-      'https://api.anaconda.org/download/main/conda-standalone/25.9.1/linux-64/conda-standalone-25.9.1-h241fc32_single_1.tar.bz2',
+      'https://conda.anaconda.org/main/linux-64/conda-standalone-25.9.1-h241fc32_single_1.tar.bz2',
     );
   });
 
   it('Returns a specific build', async () => {
-    const downloadUrl = await getDownloadUrlFromApi(
-      '*onedir*',
-      'main',
-      'latest',
-      'linux-64',
-    );
+    const opts = {
+      buildString: '*onedir*',
+      channel: 'main',
+      platform: 'linux-64',
+    } as Options;
+    const downloadUrl = await getDownloadUrlFromApi(opts);
     expect(downloadUrl).toBe(
-      'https://api.anaconda.org/download/main/conda-standalone/25.11.0/linux-64/conda-standalone-25.11.0-h26a4b9f_onedir_1.tar.bz2',
+      'https://conda.anaconda.org/main/linux-64/conda-standalone-25.11.0-h26a4b9f_onedir_1.tar.bz2',
     );
   });
 
   it('Returns the latest build of a different architecture', async () => {
-    const downloadUrl = await getDownloadUrlFromApi(
-      '',
-      'main',
-      '',
-      'linux-aarch64',
-    );
+    const opts = { channel: 'main', platform: 'linux-aarch64' } as Options;
+    const downloadUrl = await getDownloadUrlFromApi(opts);
     expect(downloadUrl).toBe(
-      'https://api.anaconda.org/download/main/conda-standalone/25.11.0/linux-aarch64/conda-standalone-25.11.0-h9687f86_single_1.tar.bz2',
+      'https://conda.anaconda.org/main/linux-aarch64/conda-standalone-25.11.0-h9687f86_single_1.tar.bz2',
+    );
+  });
+
+  it('Returns a version from a channel label', async () => {
+    const opts = {
+      channel: 'conda-canary',
+      condaStandaloneVersion: '25.11.1',
+      label: 'dev',
+      platform: 'linux-64',
+    } as Options;
+    const downloadUrl = await getDownloadUrlFromApi(opts);
+    expect(downloadUrl).toBe(
+      'https://conda.anaconda.org/conda-canary/label/dev/linux-64/conda-standalone-25.11.1-gbbef4c5_py313_single_0.conda',
     );
   });
 
   it('Returns the latest build by date', async () => {
-    const downloadUrl = await getDownloadUrlFromApi(
-      '',
-      'conda-canary',
-      '',
-      'linux-64',
-    );
+    const opts = {
+      channel: 'conda-canary',
+      label: 'dev',
+      platform: 'linux-64',
+    } as Options;
+    const downloadUrl = await getDownloadUrlFromApi(opts);
     expect(downloadUrl).toBe(
-      'https://api.anaconda.org/download/conda-canary/conda-standalone/26.1.0/linux-64/conda-standalone-26.1.0-g94d6a0b_py313_single_0.conda',
+      'https://conda.anaconda.org/conda-canary/label/dev/linux-64/conda-standalone-26.1.0-g94d6a0b_py313_single_0.conda',
     );
   });
 
   it('Finds a post-release version', async () => {
-    const downloadUrl = await getDownloadUrlFromApi(
-      '',
-      'main',
-      '25.5.1.post1',
-      'linux-64',
-    );
+    const opts = {
+      channel: 'main',
+      condaStandaloneVersion: '25.5.1.post1',
+      platform: 'linux-64',
+    } as Options;
+    const downloadUrl = await getDownloadUrlFromApi(opts);
     expect(downloadUrl).toBe(
-      'https://api.anaconda.org/download/main/conda-standalone/25.5.1.post1/linux-64/conda-standalone-25.5.1.post1-hd606d0a_single_0.tar.bz2',
+      'https://conda.anaconda.org/main/linux-64/conda-standalone-25.5.1.post1-hd606d0a_single_0.tar.bz2',
     );
   });
 
   it('Throws an error when no version is found', async () => {
-    await expect(
-      getDownloadUrlFromApi('', 'main', '0.0.0', 'linux-64'),
-    ).rejects.toThrow('suitable conda-standalone release');
+    const opts = {
+      channel: 'main',
+      condaStandaloneVersion: '0.0.0',
+      platform: 'linux-64',
+    } as Options;
+    await expect(getDownloadUrlFromApi(opts)).rejects.toThrow(
+      'suitable conda-standalone release',
+    );
   });
 
   it('Throws an error when no suitable build is found', async () => {
-    await expect(
-      getDownloadUrlFromApi('abcdef', 'conda-canary', '26.1.0', 'linux-64'),
-    ).rejects.toThrow('suitable conda-standalone release');
+    const opts = {
+      buildString: 'abcdef',
+      channel: 'main',
+      platform: 'linux-64',
+    } as Options;
+    await expect(getDownloadUrlFromApi(opts)).rejects.toThrow(
+      'suitable conda-standalone release',
+    );
   });
 
   it('Throws an error when architecture has no files', async () => {
-    await expect(
-      getDownloadUrlFromApi('', 'conda-canary', '26.1.0', 'linux-aarch64'),
-    ).rejects.toThrow('suitable conda-standalone release');
+    const opts = {
+      channel: 'conda-canary',
+      label: 'dev',
+      platform: 'linux-aarch64',
+    } as Options;
+    await expect(getDownloadUrlFromApi(opts)).rejects.toThrow(
+      'suitable conda-standalone release',
+    );
   });
 
   it('Throws an error on invalid API response', async () => {
-    await expect(
-      getDownloadUrlFromApi('', 'does-not-exist', '26.1.0', 'linux-64'),
-    ).rejects.toThrow('Failed to fetch data from');
+    const opts = { channel: 'does-not-exist' } as Options;
+    await expect(getDownloadUrlFromApi(opts)).rejects.toThrow(
+      'Failed to fetch data from',
+    );
   });
 });

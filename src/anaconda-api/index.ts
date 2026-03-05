@@ -1,3 +1,4 @@
+import type { Options } from '../options';
 import type { IPackageData, ParsedRelease } from './types';
 
 /**
@@ -96,23 +97,25 @@ const parseRelease = (release: IPackageData): ParsedRelease => {
  * When no conda-standalone release corresponds to the search parameters.
  */
 export const getDownloadUrlFromApi = async (
-  buildString: string | undefined,
-  channel: string,
-  condaStandaloneVersion: string,
-  platform: string,
+  options: Options,
 ): Promise<string> => {
   const findLatest =
-    !condaStandaloneVersion || condaStandaloneVersion === 'latest';
-  const releases = await getReleasesFromChannel(channel);
-  const matchesBuildString = buildStringMatcher(buildString);
+    !options.condaStandaloneVersion ||
+    options.condaStandaloneVersion === 'latest';
+  const releases = await getReleasesFromChannel(options.channel!);
+  const matchesBuildString = buildStringMatcher(options.buildString);
   const filteredReleases: ParsedRelease[] = releases
-    .filter((r) => r.attrs.subdir === platform)
-    .filter((r) => findLatest || r.version === condaStandaloneVersion)
+    .filter((r) => r.attrs.subdir === options.platform)
+    .filter((r) => !options.label || r.labels?.includes(options.label))
+    .filter((r) => findLatest || r.version === options.condaStandaloneVersion)
     .filter((r) => matchesBuildString(r.attrs.build))
     .map((r) => parseRelease(r));
   if (filteredReleases.length === 0) {
     throw new Error('Could not find suitable conda-standalone release.');
   }
   const condaStandaloneRelease = filteredReleases.sort(compareReleases)[0];
-  return `https:${condaStandaloneRelease.download_url}`;
+  const channel = options.label
+    ? `${options.channel}/label/${options.label}`
+    : options.channel;
+  return `https://conda.anaconda.org/${channel}/${condaStandaloneRelease.basename}`;
 };

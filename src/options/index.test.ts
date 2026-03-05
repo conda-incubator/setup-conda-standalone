@@ -31,7 +31,7 @@ describe('getOptions', () => {
     process.env = { ...inputRaw, ...oldEnv };
     let options = getOptions();
     expect(options.channel).toBe('conda-canary');
-    expect(options.condaVersion).toBe('latest');
+    expect(options.condaStandaloneVersion).toBe('latest');
     expect(options.destinationDirectory).toBe('/home/user/conda_standalone');
     expect(options.downloadUrl).toBe(undefined);
     expect(options.platform).toBe(condaPlatform);
@@ -55,11 +55,22 @@ describe('getOptions', () => {
     process.env = { ...inputRaw, ...oldEnv };
     const options = getOptions();
     expect(options.channel).toBe('conda-canary');
-    expect(options.condaVersion).toBe('1.2.3');
+    expect(options.condaStandaloneVersion).toBe('1.2.3');
     expect(options.destinationDirectory).toBe('/home/user/conda_standalone');
     expect(options.downloadUrl).toBe(
       'https://example.com/conda-standalone.conda',
     );
     expect(options.platform).toBe('linux-aarch64');
+  });
+
+  it('Correctly parses a label from a channel', () => {
+    const inputRaw: Record<string, string> = {
+      INPUT_CHANNEL: 'conda-canary/label/dev',
+      'INPUT_DESTINATION-DIRECTORY': '/home/user/conda_standalone',
+    };
+    process.env = { ...inputRaw, ...oldEnv };
+    const options = getOptions();
+    expect(options.channel).toBe('conda-canary');
+    expect(options.label).toBe('dev');
   });
 });

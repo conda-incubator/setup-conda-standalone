@@ -5,9 +5,10 @@ import { parseInputs } from './inputs';
 export type Options = Readonly<{
   buildString?: string;
   channel?: string;
-  condaVersion: string;
+  condaStandaloneVersion: string;
   destinationDirectory: string;
   downloadUrl?: string;
+  label?: string,
   platform: string;
 }>;
 
@@ -44,11 +45,22 @@ export const getCondaArch = (
 export const getOptions = (): Options => {
   const inputs = parseInputs();
 
-  const condaVersion = inputs.condaStandaloneVersion ?? 'latest';
+  const condaStandaloneVersion = inputs.condaStandaloneVersion ?? 'latest';
   const platform = inputs.platform ?? getCondaArch();
+  let channel = inputs.channel;
+  let label;
+  if (channel) {
+    const channelSplit = channel.split('/');
+    if (channelSplit.length === 3 && channelSplit[1] === 'label') {
+      channel = channelSplit[0];
+      label = channelSplit[2];
+    }
+  }
   return {
     ...inputs,
-    condaVersion,
+    channel,
+    condaStandaloneVersion,
+    label,
     platform,
   } as Options;
 };
