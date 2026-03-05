@@ -46,7 +46,13 @@ jobs:
     needs: lint
     strategy:
       matrix:
-        runner: [macos-latest, ubuntu-latest, windows-latest]
+        runner:
+          - macos-latest
+          - macos-26-intel
+          - ubuntu-latest
+          - ubuntu-24.04-arm
+          - windows-latest
+          - windows-11-arm
     runs-on: ${{ matrix.runner }}
     steps:
       - name: Checkout
@@ -78,8 +84,15 @@ jobs:
     needs: lint
     strategy:
       matrix:
-        build: [single, onedir]
-        runner: [macos-latest, ubuntu-latest, windows-latest]
+        build:
+          - single
+          - onedir
+        runner:
+          - macos-latest
+          - macos-26-intel
+          - ubuntu-latest
+          - ubuntu-24.04-arm
+          - windows-latest
     runs-on: ${{ matrix.runner }}
     env:
       BUILD_VARIANT: ${{ matrix.build }}
@@ -94,7 +107,7 @@ jobs:
         uses: ./
         with:
           build-string: '*${{ env.BUILD_VARIANT }}*'
-          channel: main
+          channel: ${{ matrix.runner == 'macos-26-intel' && 'conda-forge' || 'main' }}
           conda-standalone-version: ${{ env.CONDA_VERSION }}
           destination-directory: ${{ runner.temp }}/conda_standalone
 
