@@ -139,5 +139,5 @@ jobs:
           info_output = json.loads(proc.stdout)
           conda_standalone_version = os.environ.get("CONDA_STANDALONE_VERSION")
           conda_version = ".".join(conda_standalone_version.split(".")[:3])
-          assert info_output.get("conda_version") == os.environ.get("CONDA_VERSION")
+          assert info_output.get("conda_version") == conda_version
         shell: python
