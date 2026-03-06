@@ -13,8 +13,8 @@
     "eslint-fix": "eslint --fix",
     "lint": "run-s eslint prettier",
     "lint-fix": "run-s eslint-fix prettier-fix",
-    "prettier": "prettier --cache --check '**/*.{cjs,js,json,mjs,mts,ts}'",
-    "prettier-fix": "prettier --write --cache --check '**/*.{cjs,js,json,mjs,mts,ts}'",
+    "prettier": "prettier --check '**/*.{cjs,js,json,mjs,mts,ts}'",
+    "prettier-fix": "prettier --write --check '**/*.{cjs,js,json,mjs,mts,ts}'",
     "test": "vitest run",
     "type-check": "tsc --noEmit"
   },

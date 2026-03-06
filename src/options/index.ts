@@ -8,7 +8,7 @@ export type Options = Readonly<{
   condaStandaloneVersion: string;
   destinationDirectory: string;
   downloadUrl?: string;
-  label?: string,
+  label?: string;
   platform: string;
 }>;
 
