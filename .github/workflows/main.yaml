@@ -45,6 +45,7 @@ jobs:
     name: Run unit tests
     needs: lint
     strategy:
+      fail-fast: false
       matrix:
         runner:
           - macos-latest
@@ -83,6 +84,7 @@ jobs:
     name: Run integration tests
     needs: lint
     strategy:
+      fail-fast: false
       matrix:
         build:
           - single
@@ -96,7 +98,9 @@ jobs:
     runs-on: ${{ matrix.runner }}
     env:
       BUILD_VARIANT: ${{ matrix.build }}
-      CONDA_VERSION: 25.9.1
+      # This is the only version available on all platforms
+      # for both build variants
+      CONDA_STANDALONE_VERSION: 25.5.1.post1
     steps:
       - name: Checkout
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
@@ -107,8 +111,8 @@ jobs:
         uses: ./
         with:
           build-string: '*${{ env.BUILD_VARIANT }}*'
-          channel: ${{ matrix.runner == 'macos-26-intel' && 'conda-forge' || 'main' }}
-          conda-standalone-version: ${{ env.CONDA_VERSION }}
+          channel: main
+          conda-standalone-version: ${{ env.CONDA_STANDALONE_VERSION }}
           destination-directory: ${{ runner.temp }}/conda_standalone
 
       - name: Run integration tests
@@ -133,5 +137,7 @@ jobs:
           assert not proc.stderr
           assert proc.returncode == 0
           info_output = json.loads(proc.stdout)
+          conda_standalone_version = os.environ.get("CONDA_STANDALONE_VERSION")
+          conda_version = ".".join(conda_standalone_version.split(".")[:3])
           assert info_output.get("conda_version") == os.environ.get("CONDA_VERSION")
         shell: python
