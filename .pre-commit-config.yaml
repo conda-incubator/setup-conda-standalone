@@ -44,7 +44,7 @@ repos:
       - id: lint
         name: Linting
         files: \.(mts|ts|js|json|mjs|cjs)$
-        entry: pnpm lint-fix
+        entry: pnpm lint
         language: system
         pass_filenames: false
 
