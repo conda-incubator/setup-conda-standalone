@@ -28,6 +28,10 @@ inputs:
     description: |
       The URL to download conda-standalone from instead of using the Anaconda API.
       Must be set if `channel` is not used.
+  set-env:
+    description: |
+      Whether to export the conda-standalone location as an environment variable.
+    default: 'true'
   platform:
     description: |
       The platform of the conda-standalone binary if different from the host platform.

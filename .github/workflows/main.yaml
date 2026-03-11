@@ -95,6 +95,14 @@ jobs:
           - ubuntu-latest
           - ubuntu-24.04-arm
           - windows-latest
+        set-env:
+          - 'true'
+          - 'false'
+        exclude:
+          - build: single
+            set-env: 'false'
+          - build: onedir
+            set-env: 'true'
     runs-on: ${{ matrix.runner }}
     env:
       BUILD_VARIANT: ${{ matrix.build }}
@@ -108,6 +116,7 @@ jobs:
           persist-credentials: false
 
       - name: Setup conda-standalone
+        id: setup
         uses: ./
         with:
           build-string: '*${{ env.BUILD_VARIANT }}*'
@@ -116,15 +125,20 @@ jobs:
           destination-directory: ${{ runner.temp }}/conda_standalone
 
       - name: Run integration tests
+        env:
+          CONDA_EXE_OUTPUT: ${{ steps.setup.outputs.conda-standalone-path }}
         run: |
           import json
           import os
           import subprocess
           from pathlib import Path
 
-          conda_exe = Path(os.environ.get("CONDA_EXE"))
-          internal_dir = conda_exe.parent / "_internal"
+          conda_exe_env = os.environ.get("CONDA_EXE")
           is_onedir = os.environ.get("BUILD_VARIANT") == "onedir"
+          assert conda_exe_env is None == is_onedir
+
+          conda_exe = Path(conda_exe_env or os.environ.get("CONDA_EXE_OUTPUT"))
+          internal_dir = conda_exe.parent / "_internal"
           assert conda_exe.is_file()
           assert internal_dir.is_dir() == is_onedir
 

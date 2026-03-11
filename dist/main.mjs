@@ -17338,6 +17338,17 @@ function getInput(name, options) {
 	return val.trim();
 }
 /**
+* Sets the value of an output.
+*
+* @param     name     name of the output to set
+* @param     value    value to store. Non-string values will be converted to a string via JSON.stringify
+*/
+function setOutput(name, value) {
+	if (process.env["GITHUB_OUTPUT"] || "") return issueFileCommand("OUTPUT", prepareKeyValueMessage(name, value));
+	process.stdout.write(os$1.EOL);
+	issueCommand("set-output", { name }, toCommandValue(value));
+}
+/**
 * Sets the action status to failed.
 * When the action exits it will be with an exit code of 1
 * @param message add error issue message
@@ -22808,7 +22819,8 @@ const inputsBaseSchema = object({
 	condaStandaloneVersion: union([literal("latest"), string().regex(/^\d+\.\d+\.\d+(\.post\d+)?$/, "version must either be `latest` or a version matching `1.2.3` or `1.2.3.post4`.")]).optional(),
 	destinationDirectory: string("destination-directory cannot be empty."),
 	downloadUrl: string().optional(),
-	platform: _enum(Object.values(condaPlatforms)).optional()
+	platform: _enum(Object.values(condaPlatforms)).optional(),
+	setEnv: union([literal("true"), literal("false")]).optional()
 });
 const inputsSchema = inputsBaseSchema.refine((data) => data.downloadUrl ?? data.channel, { message: "Must specify either download-url or channel." });
 /**
@@ -22859,6 +22871,7 @@ const getCondaArch = (platform = os$1.platform(), arch = os$1.arch()) => {
 const getOptions = () => {
 	const inputs = parseInputs();
 	const condaStandaloneVersion = inputs.condaStandaloneVersion ?? "latest";
+	const setEnv = inputs.setEnv !== "false";
 	const platform = inputs.platform ?? getCondaArch();
 	let channel = inputs.channel;
 	let label;
@@ -22874,7 +22887,8 @@ const getOptions = () => {
 		channel,
 		condaStandaloneVersion,
 		label,
-		platform
+		platform,
+		setEnv
 	};
 };
 
@@ -22886,7 +22900,8 @@ const getOptions = () => {
 const run = async () => {
 	const options = getOptions();
 	const standaloneBin = await downloadCondaStandalone(options.downloadUrl ?? await getDownloadUrlFromApi(options), options.destinationDirectory);
-	exportVariable("CONDA_EXE", standaloneBin);
+	if (options.setEnv) exportVariable("CONDA_EXE", standaloneBin);
+	setOutput("conda-standalone-path", standaloneBin);
 };
 run().then(() => exit(0)).catch((err) => {
 	if (isDebug()) throw err;

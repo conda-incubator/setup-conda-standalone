@@ -8,6 +8,7 @@ export type Options = Readonly<{
   condaStandaloneVersion: string;
   destinationDirectory: string;
   downloadUrl?: string;
+  setEnv: boolean;
   label?: string;
   platform: string;
 }>;
@@ -46,6 +47,7 @@ export const getOptions = (): Options => {
   const inputs = parseInputs();
 
   const condaStandaloneVersion = inputs.condaStandaloneVersion ?? 'latest';
+  const setEnv = inputs.setEnv !== 'false';
   const platform = inputs.platform ?? getCondaArch();
   let channel = inputs.channel;
   let label;
@@ -62,5 +64,6 @@ export const getOptions = (): Options => {
     condaStandaloneVersion,
     label,
     platform,
+    setEnv,
   } as Options;
 };

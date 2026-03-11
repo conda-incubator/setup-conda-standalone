@@ -60,6 +60,7 @@ describe('parseInputs', () => {
       'INPUT_DESTINATION-DIRECTORY': '/home/user/conda_standalone',
       'INPUT_DOWNLOAD-URL': 'https://example.com/conda-standalone.conda',
       INPUT_PLATFORM: 'linux-aarch64',
+      'INPUT_SET-ENV': 'false',
     };
     process.env = { ...inputRaw, ...oldEnv };
     const inputs = parseInputs();
@@ -69,6 +70,7 @@ describe('parseInputs', () => {
     expect(inputs.downloadUrl).toBe(
       'https://example.com/conda-standalone.conda',
     );
+    expect(inputs.setEnv).toBe('false');
     expect(inputs.platform).toBe('linux-aarch64');
   });
 
@@ -81,9 +83,10 @@ describe('parseInputs', () => {
     let inputs = parseInputs();
     expect(inputs.channel).toBe('conda-canary');
     expect(inputs.condaStandaloneVersion).toBe(undefined);
+    expect(inputs.setEnv).toBe(undefined);
+    expect(inputs.destinationDirectory).toBe('/home/user/conda_standalone');
     expect(inputs.downloadUrl).toBe(undefined);
     expect(inputs.platform).toBe(undefined);
-    expect(inputs.destinationDirectory).toBe('/home/user/conda_standalone');
     inputRaw['INPUT_DOWNLOAD-URL'] =
       'https://example.com/conda-standalone.conda';
     delete inputRaw.INPUT_CHANNEL;

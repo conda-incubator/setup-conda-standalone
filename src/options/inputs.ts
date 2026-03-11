@@ -49,6 +49,7 @@ export const inputsBaseSchema = z.object({
   platform: z
     .enum(Object.values(condaPlatforms) as [string, ...string[]])
     .optional(),
+  setEnv: z.union([z.literal('true'), z.literal('false')]).optional(),
 });
 
 const inputsSchema = inputsBaseSchema.refine(

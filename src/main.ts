@@ -15,7 +15,10 @@ const run = async (): Promise<void> => {
     downloadUrl,
     options.destinationDirectory,
   );
-  core.exportVariable('CONDA_EXE', standaloneBin);
+  if (options.setEnv) {
+    core.exportVariable('CONDA_EXE', standaloneBin);
+  }
+  core.setOutput('conda-standalone-path', standaloneBin);
 };
 
 run()
