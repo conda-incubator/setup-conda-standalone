@@ -123,6 +123,7 @@ jobs:
           channel: main
           conda-standalone-version: ${{ env.CONDA_STANDALONE_VERSION }}
           destination-directory: ${{ runner.temp }}/conda_standalone
+          set-env: ${{ matrix.set-env }}
 
       - name: Run integration tests
         env:
@@ -135,7 +136,7 @@ jobs:
 
           conda_exe_env = os.environ.get("CONDA_EXE")
           is_onedir = os.environ.get("BUILD_VARIANT") == "onedir"
-          assert conda_exe_env is None == is_onedir
+          assert (conda_exe_env is None) == is_onedir
 
           conda_exe = Path(conda_exe_env or os.environ.get("CONDA_EXE_OUTPUT"))
           internal_dir = conda_exe.parent / "_internal"
