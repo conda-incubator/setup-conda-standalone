@@ -17450,6 +17450,17 @@ const parseRelease = (release) => {
 	};
 };
 /**
+* Obtains the base URL containing the channel.
+* @param channel - The channel to download the package from.
+* @returns The base URL containing the channel..
+*/
+const getDownloadBaseUrl = (channel) => {
+	switch (channel) {
+		case "main": return "https://repo.anaconda.com/pkgs";
+		default: return "https://conda.anaconda.org";
+	}
+};
+/**
 * Finds the URL of the latest conda-standalone with the constraints set
 * by the input parameters.
 * @param buildString - The build string to filter releases by.
@@ -17468,7 +17479,7 @@ const getDownloadUrlFromApi = async (options) => {
 	const filteredReleases = releases.filter((r) => r.attrs.subdir === options.platform).filter((r) => !options.label || r.labels?.includes(options.label)).filter((r) => findLatest || r.version === options.condaStandaloneVersion).filter((r) => matchesBuildString(r.attrs.build)).map((r) => parseRelease(r));
 	if (filteredReleases.length === 0) throw new Error("Could not find suitable conda-standalone release.");
 	const condaStandaloneRelease = filteredReleases.sort(compareReleases)[0];
-	return `https://conda.anaconda.org/${options.label ? `${options.channel}/label/${options.label}` : options.channel}/${condaStandaloneRelease.basename}`;
+	return `${getDownloadBaseUrl(options.channel)}/${options.label ? `${options.channel}/label/${options.label}` : options.channel}/${condaStandaloneRelease.basename}`;
 };
 
 //#endregion

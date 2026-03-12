@@ -39,7 +39,7 @@ describe('getDownloadUrlFromApi', () => {
     } as Options;
     const downloadUrl = await getDownloadUrlFromApi(opts);
     expect(downloadUrl).toBe(
-      'https://conda.anaconda.org/main/linux-64/conda-standalone-25.11.0-h241fc32_single_1.tar.bz2',
+      'https://repo.anaconda.com/pkgs/main/linux-64/conda-standalone-25.11.0-h241fc32_single_1.tar.bz2',
     );
   });
 
@@ -51,7 +51,7 @@ describe('getDownloadUrlFromApi', () => {
     } as Options;
     const downloadUrl = await getDownloadUrlFromApi(opts);
     expect(downloadUrl).toBe(
-      'https://conda.anaconda.org/main/linux-64/conda-standalone-25.11.0-h241fc32_single_1.tar.bz2',
+      'https://repo.anaconda.com/pkgs/main/linux-64/conda-standalone-25.11.0-h241fc32_single_1.tar.bz2',
     );
   });
 
@@ -59,7 +59,7 @@ describe('getDownloadUrlFromApi', () => {
     const opts = { channel: 'main', platform: 'linux-64' } as Options;
     const downloadUrl = await getDownloadUrlFromApi(opts);
     expect(downloadUrl).toBe(
-      'https://conda.anaconda.org/main/linux-64/conda-standalone-25.11.0-h241fc32_single_1.tar.bz2',
+      'https://repo.anaconda.com/pkgs/main/linux-64/conda-standalone-25.11.0-h241fc32_single_1.tar.bz2',
     );
   });
 
@@ -71,7 +71,7 @@ describe('getDownloadUrlFromApi', () => {
     } as Options;
     const downloadUrl = await getDownloadUrlFromApi(opts);
     expect(downloadUrl).toBe(
-      'https://conda.anaconda.org/main/linux-64/conda-standalone-25.9.1-h241fc32_single_1.tar.bz2',
+      'https://repo.anaconda.com/pkgs/main/linux-64/conda-standalone-25.9.1-h241fc32_single_1.tar.bz2',
     );
   });
 
@@ -83,7 +83,7 @@ describe('getDownloadUrlFromApi', () => {
     } as Options;
     const downloadUrl = await getDownloadUrlFromApi(opts);
     expect(downloadUrl).toBe(
-      'https://conda.anaconda.org/main/linux-64/conda-standalone-25.11.0-h26a4b9f_onedir_1.tar.bz2',
+      'https://repo.anaconda.com/pkgs/main/linux-64/conda-standalone-25.11.0-h26a4b9f_onedir_1.tar.bz2',
     );
   });
 
@@ -91,7 +91,7 @@ describe('getDownloadUrlFromApi', () => {
     const opts = { channel: 'main', platform: 'linux-aarch64' } as Options;
     const downloadUrl = await getDownloadUrlFromApi(opts);
     expect(downloadUrl).toBe(
-      'https://conda.anaconda.org/main/linux-aarch64/conda-standalone-25.11.0-h9687f86_single_1.tar.bz2',
+      'https://repo.anaconda.com/pkgs/main/linux-aarch64/conda-standalone-25.11.0-h9687f86_single_1.tar.bz2',
     );
   });
 
@@ -128,7 +128,7 @@ describe('getDownloadUrlFromApi', () => {
     } as Options;
     const downloadUrl = await getDownloadUrlFromApi(opts);
     expect(downloadUrl).toBe(
-      'https://conda.anaconda.org/main/linux-64/conda-standalone-25.5.1.post1-hd606d0a_single_0.tar.bz2',
+      'https://repo.anaconda.com/pkgs/main/linux-64/conda-standalone-25.5.1.post1-hd606d0a_single_0.tar.bz2',
     );
   });
 
