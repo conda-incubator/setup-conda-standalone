@@ -94,6 +94,7 @@ jobs:
           - macos-26-intel
           - ubuntu-latest
           - ubuntu-24.04-arm
+          # TODO: add windows-11-arm once win-arm64 packages are available
           - windows-latest
         set-env:
           - 'true'
