@@ -134,6 +134,8 @@ jobs:
           import subprocess
           from pathlib import Path
 
+          assert os.environ.get("CONDA_EXE") or os.environ.get("CONDA_EXE_OUTPUT")
+
           conda_exe_env = os.environ.get("CONDA_EXE")
           is_onedir = os.environ.get("BUILD_VARIANT") == "onedir"
           assert (conda_exe_env is None) == is_onedir
