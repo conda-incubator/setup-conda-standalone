@@ -1,6 +1,6 @@
 # setup-conda-standalone
 
-[![CI](https://github.com/marcoesters/setup-conda-standalone/actions/workflows/main.yaml/badge.svg)](https://github.com/marcoesters/setup-conda-standalone/actions/workflows/main.yaml)
+[![CI](https://github.com/conda-incubator/setup-conda-standalone/actions/workflows/main.yaml/badge.svg)](https://github.com/conda-incubator/setup-conda-standalone/actions/workflows/main.yaml)
 
 An action to set up [conda-standalone](https://github.com/conda/conda-standalone), a standalone
 `conda` binary. It be used, for example,  to create `conda` environments without requiring a full
@@ -18,7 +18,7 @@ For a full list of input parameters, see the [action.yaml](./action.yaml) file.
 Download the latest version of `conda-standalone` from `conda-forge` into a temporary directory.
 
 ```yaml
-- uses: marcoesters/setup-conda-standalone@main
+- uses: conda-incubator/setup-conda-standalone@main
   with:
     channel: conda-forge
     destination-directory: ${{ runner.temp }}/conda-standalone
@@ -29,7 +29,7 @@ Download the latest version of `conda-standalone` from `conda-forge` into a temp
 Download version `25.9.1` from `main`:
 
 ```yaml
-- uses: marcoesters/setup-conda-standalone@main
+- uses: conda-incubator/setup-conda-standalone@main
   with:
     channel: main
     conda-standalone-version: 25.9.1
@@ -41,7 +41,7 @@ Download version `25.9.1` from `main`:
 Download the latest `onedir` build for `linux-aarch64`:
 
 ```yaml
-- uses: marcoesters/setup-conda-standalone@main
+- uses: conda-incubator/setup-conda-standalone@main
   with:
     build-string: '*onedir*'
     channel: main
