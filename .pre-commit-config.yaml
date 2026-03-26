@@ -2,7 +2,7 @@ default_install_hook_types: [pre-commit, pre-push]
 exclude: ^dist/
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v6.0.0
+    rev: 3e8a8703264a2f4a69428a0aa4dcb512790b2c8c  # frozen: v6.0.0
     hooks:
       - id: check-added-large-files
       - id: check-case-conflict
@@ -22,7 +22,7 @@ repos:
         args: [--mapping, '2', --offset, '2', --sequence, '4', --implicit_start]
 
   - repo: https://github.com/python-jsonschema/check-jsonschema
-    rev: 0.37.0
+    rev: 13614ab716a3113145f1294ed259d9fbe5678ff3  # frozen: v0.37.1
     hooks:
       - id: check-github-workflows
         files: \.github/workflows/.*\.yaml
