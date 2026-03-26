@@ -12,3 +12,11 @@ updates:
       node:
         patterns:
           - '*'
+  - package-ecosystem: pre-commit
+    directory: /
+    schedule:
+      interval: weekly
+    groups:
+      pre-commit:
+        patterns:
+          - '*'
