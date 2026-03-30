@@ -36,15 +36,9 @@ jobs:
           cache: true
           run_install: true
 
-      - name: Lint pre-commit
-        uses: j178/prek-action@53276d8b0d10f8b6672aa85b4588c6921d0370cc  # v2.0.1
+      - uses: pre-commit/action@2c7b3805fd2a0fd8c1884dcaebf91fc102a13ecd # v3.0.1
         with:
-          extra_args: --all-files --hook-stage pre-commit
-
-      - name: Lint pre-push
-        uses: j178/prek-action@53276d8b0d10f8b6672aa85b4588c6921d0370cc  # v2.0.1
-        with:
-          extra_args: --all-files --hook-stage pre-push
+          extra_args: --all-files --hook-stage pre-commit --hook-stage pre-push
 
 
   unit-test:
