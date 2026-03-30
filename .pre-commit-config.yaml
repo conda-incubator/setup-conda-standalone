@@ -15,7 +15,7 @@ repos:
 
   - repo: https://github.com/jumanjihouse/pre-commit-hook-yamlfmt
     # This points to a revision on the main branch where a fix has been added such that it works also for Windows
-    rev: be8d90fa6286bca7f0f8345b7c95b7227926562d
+    rev: 7b8bca6012218d6804e586523b246cd0a8eb02a1
     hooks:
       - id: yamlfmt
         exclude: ^pnpm-lock\.yaml$
