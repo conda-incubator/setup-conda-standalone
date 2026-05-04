@@ -22,7 +22,7 @@ repos:
         args: [--mapping, '2', --offset, '2', --sequence, '4', --implicit_start]
 
   - repo: https://github.com/python-jsonschema/check-jsonschema
-    rev: 13614ab716a3113145f1294ed259d9fbe5678ff3  # frozen: v0.37.1
+    rev: f805888065fdb6162e1f800e50bb9460cbd223d6  # frozen: 0.37.2
     hooks:
       - id: check-github-workflows
         files: \.github/workflows/.*\.yaml
