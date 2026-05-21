@@ -65,5 +65,5 @@ export const getOptions = (): Options => {
     label,
     platform,
     setEnv,
-  } as Options;
+  };
 };
