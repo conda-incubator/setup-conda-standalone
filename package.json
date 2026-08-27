@@ -22,7 +22,7 @@
     "@actions/core": "3.0.1",
     "@actions/tool-cache": "4.0.0",
     "dev": "0.1.5",
-    "typescript": "7.0.2",
+    "typescript": "6.0.3",
     "zod": "4.4.3"
   },
   "devDependencies": {
