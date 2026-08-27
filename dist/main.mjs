@@ -38,7 +38,7 @@ var __copyProps = (to, from, except, desc) => {
 	}
 	return to;
 };
-var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__getProtoOf(mod)) : {}, __copyProps(isNodeMode || !mod || !mod.__esModule ? __defProp(target, "default", {
+var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__getProtoOf(mod)) : {}, __copyProps(isNodeMode || !mod || !mod.__esModule || !__hasOwnProp.call(mod, "default") ? __defProp(target, "default", {
 	value: mod,
 	enumerable: true
 }) : target, mod));
@@ -1864,7 +1864,7 @@ var require_dispatcher_base$1 = /* @__PURE__ */ __commonJSMin(((exports, module)
 			this[kWebSocketOptions] = opts?.webSocket ?? {};
 		}
 		get webSocketOptions() {
-			return { maxPayloadSize: this[kWebSocketOptions].maxPayloadSize ?? 128 * 1024 * 1024 };
+			return { maxPayloadSize: this[kWebSocketOptions].maxPayloadSize ?? 134217728 };
 		}
 		get destroyed() {
 			return this[kDestroyed];
@@ -1915,7 +1915,7 @@ var require_dispatcher_base$1 = /* @__PURE__ */ __commonJSMin(((exports, module)
 			}
 			if (callback === void 0) return new Promise((resolve, reject) => {
 				this.destroy(err, (err, data) => {
-					return err ? reject(err) : resolve(data);
+					return err ? /* istanbul ignore next: should never error */ reject(err) : resolve(data);
 				});
 			});
 			if (typeof callback !== "function") throw new InvalidArgumentError("invalid callback");
@@ -2387,7 +2387,7 @@ var require_connect$1 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 				assert$51(!httpSocket, "httpSocket can only be sent on TLS update");
 				port = port || 80;
 				socket = net$4.connect({
-					highWaterMark: 64 * 1024,
+					highWaterMark: 65536,
 					...options,
 					localAddress,
 					port,
@@ -3876,10 +3876,7 @@ var require_util$14 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 				case "strict-origin-when-cross-origin":
 					if (request.origin && urlHasHttpsScheme(request.origin) && !urlHasHttpsScheme(requestCurrentURL(request))) serializedOrigin = null;
 					break;
-				case "same-origin":
-					if (!sameOrigin(request, requestCurrentURL(request))) serializedOrigin = null;
-					break;
-				default:
+				case "same-origin": if (!sameOrigin(request, requestCurrentURL(request))) serializedOrigin = null;
 			}
 			request.headersList.append("origin", serializedOrigin, true);
 		}
@@ -4161,9 +4158,7 @@ var require_util$14 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 					case "value":
 						result = value;
 						break;
-					case "key+value":
-						result = [key, value];
-						break;
+					case "key+value": result = [key, value];
 				}
 				return {
 					value: result,
@@ -6666,7 +6661,8 @@ var require_client$1 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 			this.once("connect", cb);
 		}
 		[kDispatch](opts, handler) {
-			const request = new Request(opts.origin || this[kUrl].origin, opts, handler);
+			const origin = opts.origin || this[kUrl].origin;
+			const request = new Request(origin, opts, handler);
 			this[kQueue].push(request);
 			if (this[kResuming]) {} else if (util.bodyLength(request.body) == null && util.isIterable(request.body)) {
 				this[kResuming] = 1;
@@ -6878,7 +6874,7 @@ var require_client$1 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 //#region node_modules/.pnpm/undici@6.25.0/node_modules/undici/lib/dispatcher/fixed-queue.js
 var require_fixed_queue$1 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	const kSize = 2048;
-	const kMask = kSize - 1;
+	const kMask = 2047;
 	var FixedCircularBuffer = class {
 		constructor() {
 			this.bottom = 0;
@@ -7671,7 +7667,7 @@ var require_retry_handler$1 = /* @__PURE__ */ __commonJSMin(((exports, module) =
 			this.retryOpts = {
 				retry: retryFn ?? RetryHandler[kRetryHandlerDefaultRetry],
 				retryAfter: retryAfter ?? true,
-				maxTimeout: maxTimeout ?? 30 * 1e3,
+				maxTimeout: maxTimeout ?? 3e4,
 				minTimeout: minTimeout ?? 500,
 				timeoutFactor: timeoutFactor ?? 2,
 				maxRetries: maxRetries ?? 5,
@@ -7918,7 +7914,7 @@ var require_readable$1 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	const kContentLength = Symbol("kContentLength");
 	const noop = () => {};
 	var BodyReadable = class extends Readable$5 {
-		constructor({ resume, abort, contentType = "", contentLength, highWaterMark = 64 * 1024 }) {
+		constructor({ resume, abort, contentType = "", contentLength, highWaterMark = 65536 }) {
 			super({
 				autoDestroy: true,
 				read: resume,
@@ -7997,7 +7993,7 @@ var require_readable$1 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 			return this[kBody];
 		}
 		async dump(opts) {
-			let limit = Number.isFinite(opts?.limit) ? opts.limit : 128 * 1024;
+			let limit = Number.isFinite(opts?.limit) ? opts.limit : 131072;
 			const signal = opts?.signal;
 			if (signal != null && (typeof signal !== "object" || !("aborted" in signal))) throw new InvalidArgumentError("signal must be an AbortSignal");
 			signal?.throwIfAborted();
@@ -8137,7 +8133,7 @@ var require_util$13 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	const assert$40 = __require("node:assert");
 	const { ResponseStatusCodeError } = require_errors$1();
 	const { chunksDecode } = require_readable$1();
-	const CHUNK_LIMIT = 128 * 1024;
+	const CHUNK_LIMIT = 131072;
 	async function getResolveErrorBodyCallback({ callback, body, contentType, statusCode, statusMessage, headers }) {
 		assert$40(body);
 		let chunks = [];
@@ -8991,7 +8987,10 @@ var require_mock_utils$1 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 		matchedMockDispatches = matchedMockDispatches.filter(({ body }) => typeof body !== "undefined" ? matchValue(body, key.body) : true);
 		if (matchedMockDispatches.length === 0) throw new MockNotMatchedError(`Mock dispatch not matched for body '${key.body}' on path '${resolvedPath}'`);
 		matchedMockDispatches = matchedMockDispatches.filter((mockDispatch) => matchHeaders(mockDispatch, key.headers));
-		if (matchedMockDispatches.length === 0) throw new MockNotMatchedError(`Mock dispatch not matched for headers '${typeof key.headers === "object" ? JSON.stringify(key.headers) : key.headers}' on path '${resolvedPath}'`);
+		if (matchedMockDispatches.length === 0) {
+			const headers = typeof key.headers === "object" ? JSON.stringify(key.headers) : key.headers;
+			throw new MockNotMatchedError(`Mock dispatch not matched for headers '${headers}' on path '${resolvedPath}'`);
+		}
 		return matchedMockDispatches[0];
 	}
 	function addMockDispatch(mockDispatches, key, data) {
@@ -9245,7 +9244,8 @@ var require_mock_interceptor$1 = /* @__PURE__ */ __commonJSMin(((exports, module
 					this.validateReplyParameters(replyParameters);
 					return { ...this.createMockScopeDispatchData(replyParameters) };
 				};
-				return new MockScope(addMockDispatch(this[kDispatches], this[kDispatchKey], wrappedDefaultsCallback));
+				const newMockDispatch = addMockDispatch(this[kDispatches], this[kDispatchKey], wrappedDefaultsCallback);
+				return new MockScope(newMockDispatch);
 			}
 			const replyParameters = {
 				statusCode: replyOptionsCallbackOrStatusCode,
@@ -9254,14 +9254,16 @@ var require_mock_interceptor$1 = /* @__PURE__ */ __commonJSMin(((exports, module
 			};
 			this.validateReplyParameters(replyParameters);
 			const dispatchData = this.createMockScopeDispatchData(replyParameters);
-			return new MockScope(addMockDispatch(this[kDispatches], this[kDispatchKey], dispatchData));
+			const newMockDispatch = addMockDispatch(this[kDispatches], this[kDispatchKey], dispatchData);
+			return new MockScope(newMockDispatch);
 		}
 		/**
 		* Mock an undici request with a defined error.
 		*/
 		replyWithError(error) {
 			if (typeof error === "undefined") throw new InvalidArgumentError("error must be defined");
-			return new MockScope(addMockDispatch(this[kDispatches], this[kDispatchKey], { error }));
+			const newMockDispatch = addMockDispatch(this[kDispatches], this[kDispatchKey], { error });
+			return new MockScope(newMockDispatch);
 		}
 		/**
 		* Set default reply headers on the interceptor for subsequent replies
@@ -9658,7 +9660,7 @@ var require_dump$1 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	const { InvalidArgumentError, RequestAbortedError } = require_errors$1();
 	const DecoratorHandler = require_decorator_handler$1();
 	var DumpHandler = class extends DecoratorHandler {
-		#maxSize = 1024 * 1024;
+		#maxSize = 1048576;
 		#abort = null;
 		#dumped = false;
 		#aborted = false;
@@ -9708,7 +9710,7 @@ var require_dump$1 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 			this.#handler.onComplete(trailers);
 		}
 	};
-	function createDumpInterceptor({ maxSize: defaultMaxSize } = { maxSize: 1024 * 1024 }) {
+	function createDumpInterceptor({ maxSize: defaultMaxSize } = { maxSize: 1048576 }) {
 		return (dispatch) => {
 			return function Intercept(opts, handler) {
 				const { dumpMaxSize = defaultMaxSize } = opts;
@@ -9880,9 +9882,7 @@ var require_dns$1 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 					this.#handler.onError(err);
 					return;
 				case "ENOTFOUND": this.#state.deleteRecord(this.#origin);
-				default:
-					this.#handler.onError(err);
-					break;
+				default: this.#handler.onError(err);
 			}
 		}
 	};
@@ -9897,14 +9897,15 @@ var require_dns$1 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 		let affinity;
 		if (dualStack) affinity = interceptorOpts?.affinity ?? null;
 		else affinity = interceptorOpts?.affinity ?? 4;
-		const instance = new DNSInstance({
+		const opts = {
 			maxTTL: interceptorOpts?.maxTTL ?? 1e4,
 			lookup: interceptorOpts?.lookup ?? null,
 			pick: interceptorOpts?.pick ?? null,
 			dualStack,
 			affinity,
 			maxItems: interceptorOpts?.maxItems ?? Infinity
-		});
+		};
+		const instance = new DNSInstance(opts);
 		return (dispatch) => {
 			return function dnsInterceptor(origDispatchOpts, handler) {
 				const origin = origDispatchOpts.origin.constructor === URL ? origDispatchOpts.origin : new URL(origDispatchOpts.origin);
@@ -10324,7 +10325,8 @@ var require_response$1 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 		static json(data, init = {}) {
 			webidl.argumentLengthCheck(arguments, 1, "Response.json");
 			if (init !== null) init = webidl.converters.ResponseInit(init);
-			const body = extractBody(textEncoder.encode(serializeJavascriptValueToJSONString(data)));
+			const bytes = textEncoder.encode(serializeJavascriptValueToJSONString(data));
+			const body = extractBody(bytes);
 			const responseObject = fromInnerResponse(makeResponse({}), "response");
 			initializeResponse(responseObject, init, {
 				body: body[0],
@@ -11296,7 +11298,8 @@ var require_fetch$1 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 			taskDestination = request.client.globalObject;
 			crossOriginIsolatedCapability = request.client.crossOriginIsolatedCapability;
 		}
-		const timingInfo = createOpaqueTimingInfo({ startTime: coarsenedSharedCurrentTime(crossOriginIsolatedCapability) });
+		const currentTime = coarsenedSharedCurrentTime(crossOriginIsolatedCapability);
+		const timingInfo = createOpaqueTimingInfo({ startTime: currentTime });
 		const fetchParams = {
 			controller: new Fetch(dispatcher),
 			request,
@@ -11404,7 +11407,8 @@ var require_fetch$1 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 					response.headersList.set("content-type", type, true);
 				} else {
 					response.rangeRequested = true;
-					const rangeValue = simpleRangeHeaderValue(request.headersList.get("range", true), true);
+					const rangeHeader = request.headersList.get("range", true);
+					const rangeValue = simpleRangeHeaderValue(rangeHeader, true);
 					if (rangeValue === "failure") return Promise.resolve(makeNetworkError("failed to fetch the data URL"));
 					let { rangeStartValue: rangeStart, rangeEndValue: rangeEnd } = rangeValue;
 					if (rangeStart === null) {
@@ -11427,7 +11431,8 @@ var require_fetch$1 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 				return Promise.resolve(response);
 			}
 			case "data:": {
-				const dataURLStruct = dataURLProcessor(requestCurrentURL(request));
+				const currentURL = requestCurrentURL(request);
+				const dataURLStruct = dataURLProcessor(currentURL);
 				if (dataURLStruct === "failure") return Promise.resolve(makeNetworkError("failed to fetch the data URL"));
 				const mimeType = serializeAMimeType(dataURLStruct.mimeType);
 				return Promise.resolve(makeResponse({
@@ -12794,8 +12799,10 @@ var require_cache$1 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 			});
 			const clonedResponse = cloneResponse(innerResponse);
 			const bodyReadPromise = createDeferredPromise();
-			if (innerResponse.body != null) readAllBytes(innerResponse.body.stream.getReader()).then(bodyReadPromise.resolve, bodyReadPromise.reject);
-			else bodyReadPromise.resolve(void 0);
+			if (innerResponse.body != null) {
+				const reader = innerResponse.body.stream.getReader();
+				readAllBytes(reader).then(bodyReadPromise.resolve, bodyReadPromise.reject);
+			} else bodyReadPromise.resolve(void 0);
 			/** @type {CacheBatchOperation[]} */
 			const operations = [];
 			/** @type {CacheBatchOperation} */
@@ -13088,7 +13095,10 @@ var require_cachestorage$1 = /* @__PURE__ */ __commonJSMin(((exports, module) =>
 			request = webidl.converters.RequestInfo(request);
 			options = webidl.converters.MultiCacheQueryOptions(options);
 			if (options.cacheName != null) {
-				if (this.#caches.has(options.cacheName)) return await new Cache(kConstruct, this.#caches.get(options.cacheName)).match(request, options);
+				if (this.#caches.has(options.cacheName)) {
+					const cacheList = this.#caches.get(options.cacheName);
+					return await new Cache(kConstruct, cacheList).match(request, options);
+				}
 			} else for (const cacheList of this.#caches.values()) {
 				const response = await new Cache(kConstruct, cacheList).match(request, options);
 				if (response !== void 0) return response;
@@ -13116,7 +13126,10 @@ var require_cachestorage$1 = /* @__PURE__ */ __commonJSMin(((exports, module) =>
 			const prefix = "CacheStorage.open";
 			webidl.argumentLengthCheck(arguments, 1, prefix);
 			cacheName = webidl.converters.DOMString(cacheName, prefix, "cacheName");
-			if (this.#caches.has(cacheName)) return new Cache(kConstruct, this.#caches.get(cacheName));
+			if (this.#caches.has(cacheName)) {
+				const cache = this.#caches.get(cacheName);
+				return new Cache(kConstruct, cache);
+			}
 			const cache = [];
 			this.#caches.set(cacheName, cache);
 			return new Cache(kConstruct, cache);
@@ -15297,7 +15310,6 @@ var require_eventsource_stream$1 = /* @__PURE__ */ __commonJSMin(((exports, modu
 				default:
 					if (this.buffer[0] === BOM[0] && this.buffer[1] === BOM[1] && this.buffer[2] === BOM[2]) this.buffer = this.buffer.subarray(3);
 					this.checkBOM = false;
-					break;
 			}
 			while (this.pos < this.buffer.length) {
 				if (this.eventEndCheck) {
@@ -15363,9 +15375,7 @@ var require_eventsource_stream$1 = /* @__PURE__ */ __commonJSMin(((exports, modu
 				case "id":
 					if (isValidLastEventId(value)) event[field] = value;
 					break;
-				case "event":
-					if (value.length > 0) event[field] = value;
-					break;
+				case "event": if (value.length > 0) event[field] = value;
 			}
 		}
 		/**
@@ -17150,9 +17160,10 @@ const getDownloadUrlFromApi = async (options) => {
 var require_constants$5 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	const SEMVER_SPEC_VERSION = "2.0.0";
 	const MAX_LENGTH = 256;
-	const MAX_SAFE_INTEGER = Number.MAX_SAFE_INTEGER || 9007199254740991;
+	const MAX_SAFE_INTEGER = Number.MAX_SAFE_INTEGER || 
+	/* istanbul ignore next */ 9007199254740991;
 	const MAX_SAFE_COMPONENT_LENGTH = 16;
-	const MAX_SAFE_BUILD_LENGTH = MAX_LENGTH - 6;
+	const MAX_SAFE_BUILD_LENGTH = 250;
 	const RELEASE_TYPES = [
 		"major",
 		"premajor",
@@ -17753,7 +17764,11 @@ var require_coerce = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 		}
 		if (match === null) return null;
 		const major = match[2];
-		return parse(`${major}.${match[3] || "0"}.${match[4] || "0"}${options.includePrerelease && match[5] ? `-${match[5]}` : ""}${options.includePrerelease && match[6] ? `+${match[6]}` : ""}`, options);
+		const minor = match[3] || "0";
+		const patch = match[4] || "0";
+		const prerelease = options.includePrerelease && match[5] ? `-${match[5]}` : "";
+		const build = options.includePrerelease && match[6] ? `+${match[6]}` : "";
+		return parse(`${major}.${minor}.${patch}${prerelease}${build}`, options);
 	};
 	module.exports = coerce;
 }));
@@ -20175,7 +20190,7 @@ var require_dispatcher_base = /* @__PURE__ */ __commonJSMin(((exports, module) =
 			}
 			if (callback === void 0) return new Promise((resolve, reject) => {
 				this.destroy(err, (err, data) => {
-					return err ? reject(err) : resolve(data);
+					return err ? /* istanbul ignore next: should never error */ reject(err) : resolve(data);
 				});
 			});
 			if (typeof callback !== "function") throw new InvalidArgumentError("invalid callback");
@@ -20647,7 +20662,7 @@ var require_connect = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 				assert$24(!httpSocket, "httpSocket can only be sent on TLS update");
 				port = port || 80;
 				socket = net$1.connect({
-					highWaterMark: 64 * 1024,
+					highWaterMark: 65536,
 					...options,
 					localAddress,
 					port,
@@ -22136,10 +22151,7 @@ var require_util$6 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 				case "strict-origin-when-cross-origin":
 					if (request.origin && urlHasHttpsScheme(request.origin) && !urlHasHttpsScheme(requestCurrentURL(request))) serializedOrigin = null;
 					break;
-				case "same-origin":
-					if (!sameOrigin(request, requestCurrentURL(request))) serializedOrigin = null;
-					break;
-				default:
+				case "same-origin": if (!sameOrigin(request, requestCurrentURL(request))) serializedOrigin = null;
 			}
 			request.headersList.append("origin", serializedOrigin, true);
 		}
@@ -22421,9 +22433,7 @@ var require_util$6 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 					case "value":
 						result = value;
 						break;
-					case "key+value":
-						result = [key, value];
-						break;
+					case "key+value": result = [key, value];
 				}
 				return {
 					value: result,
@@ -24926,7 +24936,8 @@ var require_client = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 			this.once("connect", cb);
 		}
 		[kDispatch](opts, handler) {
-			const request = new Request(opts.origin || this[kUrl].origin, opts, handler);
+			const origin = opts.origin || this[kUrl].origin;
+			const request = new Request(origin, opts, handler);
 			this[kQueue].push(request);
 			if (this[kResuming]) {} else if (util.bodyLength(request.body) == null && util.isIterable(request.body)) {
 				this[kResuming] = 1;
@@ -25138,7 +25149,7 @@ var require_client = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 //#region node_modules/.pnpm/undici@6.23.0/node_modules/undici/lib/dispatcher/fixed-queue.js
 var require_fixed_queue = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	const kSize = 2048;
-	const kMask = kSize - 1;
+	const kMask = 2047;
 	var FixedCircularBuffer = class {
 		constructor() {
 			this.bottom = 0;
@@ -25931,7 +25942,7 @@ var require_retry_handler = /* @__PURE__ */ __commonJSMin(((exports, module) => 
 			this.retryOpts = {
 				retry: retryFn ?? RetryHandler[kRetryHandlerDefaultRetry],
 				retryAfter: retryAfter ?? true,
-				maxTimeout: maxTimeout ?? 30 * 1e3,
+				maxTimeout: maxTimeout ?? 3e4,
 				minTimeout: minTimeout ?? 500,
 				timeoutFactor: timeoutFactor ?? 2,
 				maxRetries: maxRetries ?? 5,
@@ -26178,7 +26189,7 @@ var require_readable = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	const kContentLength = Symbol("kContentLength");
 	const noop = () => {};
 	var BodyReadable = class extends Readable$2 {
-		constructor({ resume, abort, contentType = "", contentLength, highWaterMark = 64 * 1024 }) {
+		constructor({ resume, abort, contentType = "", contentLength, highWaterMark = 65536 }) {
 			super({
 				autoDestroy: true,
 				read: resume,
@@ -26257,7 +26268,7 @@ var require_readable = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 			return this[kBody];
 		}
 		async dump(opts) {
-			let limit = Number.isFinite(opts?.limit) ? opts.limit : 128 * 1024;
+			let limit = Number.isFinite(opts?.limit) ? opts.limit : 131072;
 			const signal = opts?.signal;
 			if (signal != null && (typeof signal !== "object" || !("aborted" in signal))) throw new InvalidArgumentError("signal must be an AbortSignal");
 			signal?.throwIfAborted();
@@ -26397,7 +26408,7 @@ var require_util$5 = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	const assert$13 = __require("node:assert");
 	const { ResponseStatusCodeError } = require_errors();
 	const { chunksDecode } = require_readable();
-	const CHUNK_LIMIT = 128 * 1024;
+	const CHUNK_LIMIT = 131072;
 	async function getResolveErrorBodyCallback({ callback, body, contentType, statusCode, statusMessage, headers }) {
 		assert$13(body);
 		let chunks = [];
@@ -27251,7 +27262,10 @@ var require_mock_utils = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 		matchedMockDispatches = matchedMockDispatches.filter(({ body }) => typeof body !== "undefined" ? matchValue(body, key.body) : true);
 		if (matchedMockDispatches.length === 0) throw new MockNotMatchedError(`Mock dispatch not matched for body '${key.body}' on path '${resolvedPath}'`);
 		matchedMockDispatches = matchedMockDispatches.filter((mockDispatch) => matchHeaders(mockDispatch, key.headers));
-		if (matchedMockDispatches.length === 0) throw new MockNotMatchedError(`Mock dispatch not matched for headers '${typeof key.headers === "object" ? JSON.stringify(key.headers) : key.headers}' on path '${resolvedPath}'`);
+		if (matchedMockDispatches.length === 0) {
+			const headers = typeof key.headers === "object" ? JSON.stringify(key.headers) : key.headers;
+			throw new MockNotMatchedError(`Mock dispatch not matched for headers '${headers}' on path '${resolvedPath}'`);
+		}
 		return matchedMockDispatches[0];
 	}
 	function addMockDispatch(mockDispatches, key, data) {
@@ -27505,7 +27519,8 @@ var require_mock_interceptor = /* @__PURE__ */ __commonJSMin(((exports, module) 
 					this.validateReplyParameters(replyParameters);
 					return { ...this.createMockScopeDispatchData(replyParameters) };
 				};
-				return new MockScope(addMockDispatch(this[kDispatches], this[kDispatchKey], wrappedDefaultsCallback));
+				const newMockDispatch = addMockDispatch(this[kDispatches], this[kDispatchKey], wrappedDefaultsCallback);
+				return new MockScope(newMockDispatch);
 			}
 			const replyParameters = {
 				statusCode: replyOptionsCallbackOrStatusCode,
@@ -27514,14 +27529,16 @@ var require_mock_interceptor = /* @__PURE__ */ __commonJSMin(((exports, module) 
 			};
 			this.validateReplyParameters(replyParameters);
 			const dispatchData = this.createMockScopeDispatchData(replyParameters);
-			return new MockScope(addMockDispatch(this[kDispatches], this[kDispatchKey], dispatchData));
+			const newMockDispatch = addMockDispatch(this[kDispatches], this[kDispatchKey], dispatchData);
+			return new MockScope(newMockDispatch);
 		}
 		/**
 		* Mock an undici request with a defined error.
 		*/
 		replyWithError(error) {
 			if (typeof error === "undefined") throw new InvalidArgumentError("error must be defined");
-			return new MockScope(addMockDispatch(this[kDispatches], this[kDispatchKey], { error }));
+			const newMockDispatch = addMockDispatch(this[kDispatches], this[kDispatchKey], { error });
+			return new MockScope(newMockDispatch);
 		}
 		/**
 		* Set default reply headers on the interceptor for subsequent replies
@@ -27918,7 +27935,7 @@ var require_dump = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 	const { InvalidArgumentError, RequestAbortedError } = require_errors();
 	const DecoratorHandler = require_decorator_handler();
 	var DumpHandler = class extends DecoratorHandler {
-		#maxSize = 1024 * 1024;
+		#maxSize = 1048576;
 		#abort = null;
 		#dumped = false;
 		#aborted = false;
@@ -27968,7 +27985,7 @@ var require_dump = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 			this.#handler.onComplete(trailers);
 		}
 	};
-	function createDumpInterceptor({ maxSize: defaultMaxSize } = { maxSize: 1024 * 1024 }) {
+	function createDumpInterceptor({ maxSize: defaultMaxSize } = { maxSize: 1048576 }) {
 		return (dispatch) => {
 			return function Intercept(opts, handler) {
 				const { dumpMaxSize = defaultMaxSize } = opts;
@@ -28140,9 +28157,7 @@ var require_dns = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 					this.#handler.onError(err);
 					return;
 				case "ENOTFOUND": this.#state.deleteRecord(this.#origin);
-				default:
-					this.#handler.onError(err);
-					break;
+				default: this.#handler.onError(err);
 			}
 		}
 	};
@@ -28157,14 +28172,15 @@ var require_dns = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 		let affinity;
 		if (dualStack) affinity = interceptorOpts?.affinity ?? null;
 		else affinity = interceptorOpts?.affinity ?? 4;
-		const instance = new DNSInstance({
+		const opts = {
 			maxTTL: interceptorOpts?.maxTTL ?? 1e4,
 			lookup: interceptorOpts?.lookup ?? null,
 			pick: interceptorOpts?.pick ?? null,
 			dualStack,
 			affinity,
 			maxItems: interceptorOpts?.maxItems ?? Infinity
-		});
+		};
+		const instance = new DNSInstance(opts);
 		return (dispatch) => {
 			return function dnsInterceptor(origDispatchOpts, handler) {
 				const origin = origDispatchOpts.origin.constructor === URL ? origDispatchOpts.origin : new URL(origDispatchOpts.origin);
@@ -28584,7 +28600,8 @@ var require_response = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 		static json(data, init = {}) {
 			webidl.argumentLengthCheck(arguments, 1, "Response.json");
 			if (init !== null) init = webidl.converters.ResponseInit(init);
-			const body = extractBody(textEncoder.encode(serializeJavascriptValueToJSONString(data)));
+			const bytes = textEncoder.encode(serializeJavascriptValueToJSONString(data));
+			const body = extractBody(bytes);
 			const responseObject = fromInnerResponse(makeResponse({}), "response");
 			initializeResponse(responseObject, init, {
 				body: body[0],
@@ -29556,7 +29573,8 @@ var require_fetch = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 			taskDestination = request.client.globalObject;
 			crossOriginIsolatedCapability = request.client.crossOriginIsolatedCapability;
 		}
-		const timingInfo = createOpaqueTimingInfo({ startTime: coarsenedSharedCurrentTime(crossOriginIsolatedCapability) });
+		const currentTime = coarsenedSharedCurrentTime(crossOriginIsolatedCapability);
+		const timingInfo = createOpaqueTimingInfo({ startTime: currentTime });
 		const fetchParams = {
 			controller: new Fetch(dispatcher),
 			request,
@@ -29664,7 +29682,8 @@ var require_fetch = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 					response.headersList.set("content-type", type, true);
 				} else {
 					response.rangeRequested = true;
-					const rangeValue = simpleRangeHeaderValue(request.headersList.get("range", true), true);
+					const rangeHeader = request.headersList.get("range", true);
+					const rangeValue = simpleRangeHeaderValue(rangeHeader, true);
 					if (rangeValue === "failure") return Promise.resolve(makeNetworkError("failed to fetch the data URL"));
 					let { rangeStartValue: rangeStart, rangeEndValue: rangeEnd } = rangeValue;
 					if (rangeStart === null) {
@@ -29687,7 +29706,8 @@ var require_fetch = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 				return Promise.resolve(response);
 			}
 			case "data:": {
-				const dataURLStruct = dataURLProcessor(requestCurrentURL(request));
+				const currentURL = requestCurrentURL(request);
+				const dataURLStruct = dataURLProcessor(currentURL);
 				if (dataURLStruct === "failure") return Promise.resolve(makeNetworkError("failed to fetch the data URL"));
 				const mimeType = serializeAMimeType(dataURLStruct.mimeType);
 				return Promise.resolve(makeResponse({
@@ -31054,8 +31074,10 @@ var require_cache = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 			});
 			const clonedResponse = cloneResponse(innerResponse);
 			const bodyReadPromise = createDeferredPromise();
-			if (innerResponse.body != null) readAllBytes(innerResponse.body.stream.getReader()).then(bodyReadPromise.resolve, bodyReadPromise.reject);
-			else bodyReadPromise.resolve(void 0);
+			if (innerResponse.body != null) {
+				const reader = innerResponse.body.stream.getReader();
+				readAllBytes(reader).then(bodyReadPromise.resolve, bodyReadPromise.reject);
+			} else bodyReadPromise.resolve(void 0);
 			/** @type {CacheBatchOperation[]} */
 			const operations = [];
 			/** @type {CacheBatchOperation} */
@@ -31348,7 +31370,10 @@ var require_cachestorage = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 			request = webidl.converters.RequestInfo(request);
 			options = webidl.converters.MultiCacheQueryOptions(options);
 			if (options.cacheName != null) {
-				if (this.#caches.has(options.cacheName)) return await new Cache(kConstruct, this.#caches.get(options.cacheName)).match(request, options);
+				if (this.#caches.has(options.cacheName)) {
+					const cacheList = this.#caches.get(options.cacheName);
+					return await new Cache(kConstruct, cacheList).match(request, options);
+				}
 			} else for (const cacheList of this.#caches.values()) {
 				const response = await new Cache(kConstruct, cacheList).match(request, options);
 				if (response !== void 0) return response;
@@ -31376,7 +31401,10 @@ var require_cachestorage = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 			const prefix = "CacheStorage.open";
 			webidl.argumentLengthCheck(arguments, 1, prefix);
 			cacheName = webidl.converters.DOMString(cacheName, prefix, "cacheName");
-			if (this.#caches.has(cacheName)) return new Cache(kConstruct, this.#caches.get(cacheName));
+			if (this.#caches.has(cacheName)) {
+				const cache = this.#caches.get(cacheName);
+				return new Cache(kConstruct, cache);
+			}
 			const cache = [];
 			this.#caches.set(cacheName, cache);
 			return new Cache(kConstruct, cache);
@@ -33492,7 +33520,6 @@ var require_eventsource_stream = /* @__PURE__ */ __commonJSMin(((exports, module
 				default:
 					if (this.buffer[0] === BOM[0] && this.buffer[1] === BOM[1] && this.buffer[2] === BOM[2]) this.buffer = this.buffer.subarray(3);
 					this.checkBOM = false;
-					break;
 			}
 			while (this.pos < this.buffer.length) {
 				if (this.eventEndCheck) {
@@ -33558,9 +33585,7 @@ var require_eventsource_stream = /* @__PURE__ */ __commonJSMin(((exports, module
 				case "id":
 					if (isValidLastEventId(value)) event[field] = value;
 					break;
-				case "event":
-					if (value.length > 0) event[field] = value;
-					break;
+				case "event": if (value.length > 0) event[field] = value;
 			}
 		}
 		/**
@@ -34357,7 +34382,7 @@ var HttpClient = class {
 		req.on("socket", (sock) => {
 			socket = sock;
 		});
-		req.setTimeout(this._socketTimeout || 3 * 6e4, () => {
+		req.setTimeout(this._socketTimeout || 18e4, () => {
 			if (socket) socket.end();
 			handleResult(/* @__PURE__ */ new Error(`Request timeout: ${info.options.path}`));
 		});
@@ -34676,7 +34701,10 @@ function downloadTool(url, dest, auth, headers) {
 		yield mkdirP(path.dirname(dest));
 		debug(`Downloading ${url}`);
 		debug(`Destination ${dest}`);
-		return yield new RetryHelper(3, _getGlobal("TEST_DOWNLOAD_TOOL_RETRY_MIN_SECONDS", 10), _getGlobal("TEST_DOWNLOAD_TOOL_RETRY_MAX_SECONDS", 20)).execute(() => __awaiter(this, void 0, void 0, function* () {
+		const maxAttempts = 3;
+		const minSeconds = _getGlobal("TEST_DOWNLOAD_TOOL_RETRY_MIN_SECONDS", 10);
+		const maxSeconds = _getGlobal("TEST_DOWNLOAD_TOOL_RETRY_MAX_SECONDS", 20);
+		return yield new RetryHelper(maxAttempts, minSeconds, maxSeconds).execute(() => __awaiter(this, void 0, void 0, function* () {
 			return yield downloadToolAttempt(url, dest || "", auth, headers);
 		}), (err) => {
 			if (err instanceof HTTPError && err.httpStatusCode) {
@@ -34870,7 +34898,9 @@ const condaBinaryName = platform().startsWith("win") ? "conda.exe" : "conda";
 * @returns  The path to the temp directory.
 */
 const getTempDirectory = () => {
-	return process.env.RUNNER_TEMP ?? process.env.TEMP ?? process.env.TMP ?? "/tmp";
+	return process.env.RUNNER_TEMP ?? 
+	/* istanbul ignore start */
+	process.env.TEMP ?? process.env.TMP ?? "/tmp";
 };
 /**
 * Extracts a conda or .tar.bz2 file and returns the path to conda.exe.
@@ -35027,7 +35057,6 @@ function cached(getter) {
 			Object.defineProperty(this, "value", { value });
 			return value;
 		}
-		throw new Error("cached value already set");
 	} };
 }
 function nullish(input) {
@@ -38400,11 +38429,12 @@ const ZodObject = /*@__PURE__*/ $constructor("ZodObject", (inst, def) => {
 	});
 });
 function object(shape, params) {
-	return new ZodObject({
+	const def = {
 		type: "object",
 		shape: shape ?? {},
 		...normalizeParams(params)
-	});
+	};
+	return new ZodObject(def);
 }
 const ZodUnion = /*@__PURE__*/ $constructor("ZodUnion", (inst, def) => {
 	$ZodUnion.init(inst, def);
@@ -38462,9 +38492,10 @@ const ZodEnum = /*@__PURE__*/ $constructor("ZodEnum", (inst, def) => {
 	};
 });
 function _enum(values, params) {
+	const entries = Array.isArray(values) ? Object.fromEntries(values.map((v) => [v, v])) : values;
 	return new ZodEnum({
 		type: "enum",
-		entries: Array.isArray(values) ? Object.fromEntries(values.map((v) => [v, v])) : values,
+		entries,
 		...normalizeParams(params)
 	});
 }
@@ -38694,7 +38725,10 @@ const inputsSchema = inputsBaseSchema.refine((data) => data.downloadUrl ?? data.
 const parseInputs = () => {
 	const keys = inputsBaseSchema.shape;
 	const rawInputs = {};
-	for (const key in keys) rawInputs[key] = getInputOrUndefined(camelToKebab(key));
+	for (const key in keys) {
+		const ghaKey = camelToKebab(key);
+		rawInputs[key] = getInputOrUndefined(ghaKey);
+	}
 	const parsedInput = inputsSchema.safeParse(rawInputs);
 	if (!parsedInput.success) {
 		for (const error$1 of parsedInput.error.issues) if (error$1.path.length > 0) {
@@ -38763,7 +38797,8 @@ const getOptions = () => {
 */
 const run = async () => {
 	const options = getOptions();
-	const standaloneBin = await downloadCondaStandalone(options.downloadUrl ?? await getDownloadUrlFromApi(options), options.destinationDirectory);
+	const downloadUrl = options.downloadUrl ?? await getDownloadUrlFromApi(options);
+	const standaloneBin = await downloadCondaStandalone(downloadUrl, options.destinationDirectory);
 	if (options.setEnv) exportVariable("CONDA_EXE", standaloneBin);
 	setOutput("conda-standalone-path", standaloneBin);
 };
