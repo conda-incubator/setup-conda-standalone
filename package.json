@@ -26,6 +26,8 @@
     "zod": "4.5.4"
   },
   "devDependencies": {
+    "@typescript/native": "npm:typescript@^7.0.2",
+    "typescript": "npm:@typescript/typescript6@^6.0.2",
     "@containerbase/eslint-plugin": "^2.1.1",
     "@eslint/js": "10.0.1",
     "@microsoft/tsdoc": "0.16.0",
