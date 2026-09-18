@@ -39,6 +39,9 @@ importers:
       '@types/node':
         specifier: 26.4.1
         version: 26.4.1
+      '@typescript/native':
+        specifier: npm:typescript@^7.0.2
+        version: typescript@7.0.2
       '@vitest/coverage-v8':
         specifier: 5.0.0
         version: 5.0.0(vitest@5.0.0)
