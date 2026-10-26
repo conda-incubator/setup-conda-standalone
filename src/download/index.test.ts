@@ -12,7 +12,7 @@ const condaStandaloneUrls: Record<string, string> = {
   binary:
     'https://github.com/conda/conda-standalone/releases/download/24.9.2/conda-standalone-24.9.2-Linux-x86_64.exe',
   conda:
-    'https://api.anaconda.org/download/conda-canary/conda-standalone/26.1.0/linux-64/conda-standalone-26.1.0-g94d6a0b_py313_single_0.conda',
+    'https://api.anaconda.org/download/conda-forge/conda-standalone/26.9.4/linux-64/conda-standalone-26.9.4-h643be8f_0.conda',
   tar: 'https://repo.anaconda.com/pkgs/main/linux-64/conda-standalone-25.11.0-h26a4b9f_onedir_1.tar.bz2',
 };
 
